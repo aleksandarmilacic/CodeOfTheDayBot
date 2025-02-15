@@ -9,6 +9,7 @@ using System.Net.Http.Headers;
 using System.Net;
 using ProductHeaderValue = Octokit.ProductHeaderValue;
 using System.Text.Json;
+using System.Net.Http.Json;
 
 namespace CodeOfTheDay;
 
@@ -16,19 +17,12 @@ class Program
 {
     private static readonly string GitHubToken = Environment.GetEnvironmentVariable("GITHUB_TOKEN");
     private static readonly string OpenAiApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
-    private static readonly string GitHubUser = "your-github-username";
-    private static readonly string TargetRepo = "AICodeOfTheDay";
+    private static readonly string GitHubUser = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY_OWNER");
+    private static readonly string TargetRepo = "ai-generated-code-of-the-day";
 
     static async Task Main()
     {
-        var random = new Random();
-
-        // Chance to skip activity (~30%) for natural behavior
-        if (random.Next(0, 100) < 30)
-        {
-            Console.WriteLine("Skipping today’s commit to make activity look human-like.");
-            return;
-        }
+       
 
         var github = new GitHubClient(new ProductHeaderValue("GitHubCommitBot"))
         {
@@ -66,34 +60,69 @@ class Program
         Console.WriteLine($"Committed: {fileName} to {repo.Name}");
     }
 
-    static async Task<string?> GenerateCodeWithChatGPT()
+    static async Task<string> GenerateCodeWithChatGPT()
     {
-        var client = new RestClient("https://api.openai.com/v1/completions");
-        var request = new RestRequest();
-        request.Method = Method.Post;
-        request.AddHeader("Authorization", $"Bearer {OpenAiApiKey}");
-        request.AddHeader("Content-Type", "application/json");
+        string prompt = "Generate an interesting C# algorithm with comments that is runnable in a console application. Respond only in code, since the response in its full will be used as copy paste into the .cs file.";
 
-        var prompt = "Generate a unique, fun, and executable C# code snippet for 'Code of the Day'. The code should be simple yet interesting. Include comments explaining its functionality.";
+        using HttpClient client = new HttpClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", OpenAiApiKey);
 
-        var body = new
+        var payload = new
         {
             model = "gpt-4",
-            prompt = prompt,
-            max_tokens = 300,
+            messages = new[]
+            {
+            new { role = "system", content = "You are an expert C# developer providing creative and useful C# code snippets. Respond only in code, since the response in its full will be used as copy paste into the .cs file." },
+            new { role = "user", content = prompt }
+        },
+            max_tokens = 400,
             temperature = 0.7
         };
 
-        request.AddJsonBody(body);
-
-        var response = await client.ExecuteAsync(request);
-        if (!response.IsSuccessful || response.Content == null)
+        try
         {
-            Console.WriteLine($"Error fetching from OpenAI: {response.StatusCode}");
-            return null;
-        }
+            HttpResponseMessage response = await client.PostAsJsonAsync("https://api.openai.com/v1/chat/completions", payload);
+            response.EnsureSuccessStatusCode();
 
-        var jsonResponse = JsonDocument.Parse(response.Content);
-        return jsonResponse.RootElement.GetProperty("choices")[0].GetProperty("text").GetString();
+            string result = await response.Content.ReadAsStringAsync();
+            var responseJson = JsonSerializer.Deserialize<OpenAiResponse>(result, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            string rawCode = responseJson?.Choices?[0]?.Message?.Content ?? "No response from ChatGPT.";
+
+            return CleanCode(rawCode);
+        }
+        catch (Exception ex)
+        {
+            return $"Error calling ChatGPT API: {ex.Message}";
+        }
     }
+
+    // Method to clean up markdown formatting
+    static string CleanCode(string rawCode)
+    {
+        if (string.IsNullOrEmpty(rawCode))
+            return string.Empty;
+
+        // Remove markdown triple backticks ```C# ... ``` or ``` ... ```
+        rawCode = rawCode.Replace("```C#", "").Replace("```c#", "").Replace("```", "").Trim();
+
+        return rawCode;
+    }
+}
+
+// OpenAI API Response Model
+public class OpenAiResponse
+{
+    public Choice[] Choices { get; set; }
+}
+
+public class Choice
+{
+    public ChatMessage Message { get; set; }
+}
+
+public class ChatMessage
+{
+    public string Role { get; set; }
+    public string Content { get; set; }
 }
