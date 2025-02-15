@@ -21,8 +21,7 @@ class Program
     private static readonly string TargetRepo = "ai-generated-code-of-the-day";
 
     static async Task Main()
-    {
-        var test = await GenerateCodeWithChatGPT();
+    { 
 
         var github = new GitHubClient(new ProductHeaderValue("GitHubCommitBot"))
         {
