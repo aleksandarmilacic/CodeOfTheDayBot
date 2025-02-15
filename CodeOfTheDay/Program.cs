@@ -60,7 +60,8 @@ class Program
 
     static async Task<string> GenerateCodeWithChatGPT()
     {
-        string prompt = "Generate a C# algorithm that is runnable in a console application. Respond with ONLY the pure code. Do not include explanations, comments, or formatting like ```.";
+        string prompt = "Generate a unique, clever C# algorithm worthy of 'Code of the Day'. Respond **ONLY** with valid C# code that is fully runnable in a console application. **NO COMMENTS, NO EXPLANATIONS, NO FORMATTING, NO EXTRA TEXT**.";
+
         using HttpClient client = new HttpClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", OpenAiApiKey);
 
@@ -69,7 +70,7 @@ class Program
             model = "gpt-4",
             messages = new[]
             {
-            new { role = "system", content = "Generate a creative code, like leet code or some clever solution, that is worthy of Code of the day. You are an AI that generates ONLY pure C# code. Do not include comments, explanations, or markdown formatting. Respond ONLY in CODE, since the response in its full will be used as copy paste into the .cs file. NO EXTRA TEXT BESIDES CODE." },
+            new { role = "system", content = "You are a strict AI that returns only pure, executable C# code. **ABSOLUTELY NO COMMENTS, NO EXPLANATIONS, NO MARKDOWN.** The response will be used directly as a .cs file, so output only C# code." },
             new { role = "user", content = prompt }
         },
             max_tokens = 400,
