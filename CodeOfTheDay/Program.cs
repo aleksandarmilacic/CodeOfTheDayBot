@@ -30,10 +30,8 @@ class Program
 
         var repo = await github.Repository.Get(GitHubUser, TargetRepo);
 
-        // ✅ Fetch latest README.md before querying AI
         string readMeContent = await GetReadMeContent(github, repo);
 
-        // ✅ Generate new unique C# code
         var (fileName, content) = await GenerateCodeWithChatGPT(readMeContent);
         if (string.IsNullOrEmpty(content))
         {
@@ -50,7 +48,7 @@ class Program
         try
         {
             var readmeFile = await github.Repository.Content.GetAllContents(repo.Owner.Login, repo.Name, ReadMePath);
-            return Encoding.UTF8.GetString(Convert.FromBase64String(readmeFile[0].Content));
+            return readmeFile[0].Content;
         }
         catch (Octokit.NotFoundException)
         {
