@@ -16,13 +16,13 @@ namespace CodeOfTheDay;
 class Program
 {
     private static readonly string GitHubToken = Environment.GetEnvironmentVariable("GH_PAT");
-    private static readonly string OpenAiApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY");
+    private static readonly string OpenAiApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY") ?? "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";
     private static readonly string GitHubUser = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY_OWNER");
     private static readonly string TargetRepo = "ai-generated-code-of-the-day";
 
     static async Task Main()
     {
-       
+        var test = await GenerateCodeWithChatGPT();
 
         var github = new GitHubClient(new ProductHeaderValue("GitHubCommitBot"))
         {
@@ -35,16 +35,15 @@ class Program
 
     static async Task CommitCodeOfTheDay(GitHubClient github, Repository repo)
     {
-        string? code = await GenerateCodeWithChatGPT();
-        if (string.IsNullOrEmpty(code))
+        string? content = await GenerateCodeWithChatGPT();
+        if (string.IsNullOrEmpty(content))
         {
             Console.WriteLine("ChatGPT failed to generate code. Skipping commit.");
             return;
         }
 
         string fileName = $"CodeOfTheDay_{DateTime.UtcNow:yyyyMMdd}.cs";
-
-        var content = Convert.ToBase64String(Encoding.UTF8.GetBytes(code));
+         
         var repoContent = await github.Repository.Content.GetAllContents(repo.Owner.Login, repo.Name);
 
         var existingFile = repoContent.FirstOrDefault(f => f.Name == fileName);
