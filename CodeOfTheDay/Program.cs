@@ -65,7 +65,7 @@ class Program
                         "Avoid Fibonacci, Factorial, and common beginner algorithms. Instead, generate something creative, " +
                         "such as a leetcode-style problem, an interesting number pattern, or a mathematical puzzle.\n\n" +
                         "Your response **MUST** strictly follow this format:\n\n" +
-                        "[fileName]UniqueAlgorithm_{DateTime.UtcNow:yyyyMMdd_HHmmss}.cs[/fileName]\n" +
+                        "[fileName]<NAME OF Algorithm>_{DateTime.UtcNow:yyyyMMdd_HHmmss}.cs[/fileName]\n" +
                         "[code]\n<YOUR C# CODE HERE>\n[/code]\n\n" +
                         "Important: Do NOT repeat any of the following past algorithms:\n" + readMeContent;
 
@@ -157,18 +157,18 @@ class Program
             readMeContent += $"- [{fileName}](./{fileName}) ({DateTime.UtcNow:yyyy-MM-dd})\n";
         }
 
-        string encodedContent = Convert.ToBase64String(Encoding.UTF8.GetBytes(readMeContent));
+       
         var repoContent = await github.Repository.Content.GetAllContents(repo.Owner.Login, repo.Name, ReadMePath);
 
         if (repoContent.Any())
         {
             await github.Repository.Content.UpdateFile(repo.Owner.Login, repo.Name, ReadMePath,
-                new UpdateFileRequest($"Updating README.md with {fileName}", encodedContent, repoContent[0].Sha));
+                new UpdateFileRequest($"Updating README.md with {fileName}", readMeContent, repoContent[0].Sha));
         }
         else
         {
             await github.Repository.Content.CreateFile(repo.Owner.Login, repo.Name, ReadMePath,
-                new CreateFileRequest($"Creating README.md and logging {fileName}", encodedContent, "main"));
+                new CreateFileRequest($"Creating README.md and logging {fileName}", readMeContent, "main"));
         }
 
         Console.WriteLine($"Updated README.md with {fileName}");
