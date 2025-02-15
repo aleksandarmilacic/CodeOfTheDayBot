@@ -41,7 +41,7 @@ class Program
             return;
         }
 
-        string fileName = $"CodeOfTheDay_{DateTime.UtcNow:yyyyMMdd}.cs";
+        string fileName = $"CodeOfTheDay_{DateTime.UtcNow:yyyyMMddHHmm}.cs";
          
         var repoContent = await github.Repository.Content.GetAllContents(repo.Owner.Login, repo.Name);
 
@@ -60,7 +60,11 @@ class Program
 
     static async Task<string> GenerateCodeWithChatGPT()
     {
-        string prompt = "Generate a unique, clever C# algorithm worthy of 'Code of the Day'. Respond **ONLY** with valid C# code that is fully runnable in a console application. **NO COMMENTS, NO EXPLANATIONS, NO FORMATTING, NO EXTRA TEXT**.";
+        string today = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm"); // we do this to spice up the randomness
+        string prompt = $"Today is {today}. Generate a unique C# algorithm based on today's date that is worthy of 'Code of the Day'. " +
+                        "Avoid Fibonacci, Factorial, and common beginner algorithms. Instead, generate something creative, " +
+                        "such as a leetcode-style problem, an interesting number pattern, or a mathematical puzzle. " +
+                        "**Respond ONLY with pure code—no explanations, no comments, no markdown, also before or after the code.**";
 
         using HttpClient client = new HttpClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", OpenAiApiKey);
@@ -70,9 +74,11 @@ class Program
             model = "gpt-4",
             messages = new[]
             {
-            new { role = "system", content = "You are a strict AI that returns only pure, executable C# code. **ABSOLUTELY NO COMMENTS, NO EXPLANATIONS, NO MARKDOWN.** The response will be used directly as a .cs file, so output only C# code." },
-            new { role = "user", content = prompt }
-        },
+              new { role = "system", content = "You are a strict AI that returns **ONLY PURE, EXECUTABLE C# CODE**. " +
+                                             "Absolutely NO comments, NO explanations, NO markdown. " +
+                                             "You must generate a unique C# problem every day based on the given date." },
+              new { role = "user", content = prompt }
+            },
             max_tokens = 400,
             temperature = 0.7
         };
