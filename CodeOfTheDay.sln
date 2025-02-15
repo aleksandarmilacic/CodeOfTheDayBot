@@ -5,6 +5,13 @@ VisualStudioVersion = 17.12.35707.178 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeOfTheDay", "CodeOfTheDay\CodeOfTheDay.csproj", "{667CA3E0-90A3-482B-8325-DA739417B132}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{BB33568F-0A8E-4B8F-9AF9-6E9BAB8E8A51}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{FEB2CF6D-20F8-4C22-B702-125B4ED1374C}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\bot.yml = .github\workflows\bot.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +25,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FEB2CF6D-20F8-4C22-B702-125B4ED1374C} = {BB33568F-0A8E-4B8F-9AF9-6E9BAB8E8A51}
 	EndGlobalSection
 EndGlobal
