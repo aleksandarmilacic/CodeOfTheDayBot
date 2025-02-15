@@ -11,7 +11,7 @@ using ProductHeaderValue = Octokit.ProductHeaderValue;
 using System.Text.Json;
 using System.Net.Http.Json;
 
-namespace CodeOfTheDay;
+namespace CodeOfTheDayBot;
 
 class Program
 {
@@ -67,6 +67,8 @@ class Program
                         "Your response **MUST** strictly follow this format:\n\n" +
                         "[fileName]<NAME OF Algorithm>_{DateTime.UtcNow:yyyyMMdd_HHmmss}.cs[/fileName]\n" +
                         "[code]\n<YOUR C# CODE HERE>\n[/code]\n\n" +
+                        "The code needs to contain the executable part void Main() or async Task Main() so that it can run the algorithm." +
+                        "The code is adjusted for .NET 9 or higher" +
                         "Important: Do NOT repeat any of the following past algorithms:\n" + readMeContent;
 
         using HttpClient client = new HttpClient();

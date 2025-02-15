@@ -19,13 +19,13 @@ jobs:
           dotnet-version: 9.0
 
       - name: Install dependencies
-        run: dotnet restore CodeOfTheDay/CodeOfTheDay.csproj
+        run: dotnet restore CodeOfTheDayBot/CodeOfTheDayBot.csproj
 
       - name: Build bot
-        run: dotnet build CodeOfTheDay/CodeOfTheDay.csproj --configuration Release
+        run: dotnet build CodeOfTheDayBot/CodeOfTheDayBot.csproj --configuration Release
 
       - name: Run bot
-        run: dotnet run --project CodeOfTheDay/CodeOfTheDay.csproj
+        run: dotnet run --project CodeOfTheDayBot/CodeOfTheDayBot.csproj
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}

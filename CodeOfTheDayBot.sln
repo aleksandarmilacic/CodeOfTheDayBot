@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35707.178 d17.12
+VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeOfTheDay", "CodeOfTheDay\CodeOfTheDay.csproj", "{667CA3E0-90A3-482B-8325-DA739417B132}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeOfTheDayBot", "CodeOfTheDay\CodeOfTheDayBot.csproj", "{667CA3E0-90A3-482B-8325-DA739417B132}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{BB33568F-0A8E-4B8F-9AF9-6E9BAB8E8A51}"
 EndProject
