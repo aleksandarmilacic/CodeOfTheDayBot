@@ -16,7 +16,7 @@ namespace CodeOfTheDay;
 class Program
 {
     private static readonly string GitHubToken = Environment.GetEnvironmentVariable("GH_PAT");
-    private static readonly string OpenAiApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY") ?? "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";
+    private static readonly string OpenAiApiKey = Environment.GetEnvironmentVariable("OPENAI_API_KEY") ;
     private static readonly string GitHubUser = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY_OWNER");
     private static readonly string TargetRepo = "ai-generated-code-of-the-day";
 
